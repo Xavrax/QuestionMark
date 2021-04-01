@@ -3,6 +3,39 @@
 
 #include <memory>
 
+/// Option class containing value or none
+template <typename T>
+class Option {
+public:
+    /// Creates option containing value
+    static Option Some(T value) {
+        return Some(std::make_unique<T>(value));
+    }
+
+    /// Creates option containing value
+    static Option Some(std::unique_ptr<T> ptr) {
+        return Option(std::move(ptr));
+    }
+
+    /// Creates option containing none
+    static Option None() {
+        return Option(nullptr);
+    }
+
+    /// Checks if option contains value
+    bool is_some() const {
+        return _some != nullptr;
+    }
+
+private:
+    explicit Option(std::unique_ptr<T> value) {
+        this->_some = std::move(value);
+    }
+
+    std::unique_ptr<T> _some;
+};
+
+/// Result class containing data on successful or error
 template <typename T, typename E>
 class Result {
 public:
