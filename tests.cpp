@@ -1,5 +1,3 @@
-//#ifdef QUESTIONMARK_TEST
-
 #define CATCH_CONFIG_MAIN
 #include "external/catch2.hpp"
 
@@ -8,5 +6,3 @@ namespace tests {
 
     }
 }
-
-//#endif //QUESTIONMARK_TEST
