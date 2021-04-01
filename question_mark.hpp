@@ -46,7 +46,8 @@ public:
         return false;
     }
 
-    /// Returns contained value and
+    /// Returns contained value or panic with given message
+    /// when value is none
     T expect(const std::string& msg) {
         if (is_none()) {
             PANIC(msg);
@@ -55,6 +56,7 @@ public:
         return T(*_some);
     }
 
+    /// Returns contained value or panic when value is none
     T unwrap() {
         if (is_none()) {
             PANIC("Option::unwrap() called on a None");
