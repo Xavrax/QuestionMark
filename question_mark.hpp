@@ -26,13 +26,32 @@ public:
         return _err != nullptr;
     }
 
-    std::unique_ptr<T> _ok;
-    std::unique_ptr<E> _err;
+    /// Checks if results containing given value
+    bool contains(T value) {
+        if (is_ok()) {
+            return *_ok == value;
+        }
+
+        return false;
+    }
+
+    /// Checks if results containing given error
+    bool contains_err(E error) {
+        if (is_err()) {
+            return *_err == error;
+        }
+
+        return false;
+    }
+
 private:
     Result(std::unique_ptr<T> ok, std::unique_ptr<E> err) {
         this->_ok = std::move(ok);
         this->_err = std::move(err);
     }
+
+    std::unique_ptr<T> _ok;
+    std::unique_ptr<E> _err;
 };
 
 
