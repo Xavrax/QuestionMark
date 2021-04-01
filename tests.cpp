@@ -8,6 +8,27 @@ namespace tests {
             REQUIRE(Option<int>::Some(10).is_some());
             REQUIRE_FALSE(Option<int>::None().is_some());
         }
+
+        SECTION("is_none") {
+            REQUIRE(Option<int>::None().is_none());
+            REQUIRE_FALSE(Option<int>::Some(10).is_none());
+        }
+
+        SECTION("contains") {
+            REQUIRE(Option<int>::Some(10).contains(10));
+            REQUIRE_FALSE(Option<int>::Some(20).contains(10));
+            REQUIRE_FALSE(Option<int>::None().contains(10));
+        }
+
+        SECTION("expect") {
+            REQUIRE(Option<int>::Some(10).expect("") == 10);
+            REQUIRE_FALSE(Option<int>::Some(20).expect("") == 10);
+        }
+
+        SECTION("unwrap") {
+            REQUIRE(Option<int>::Some(10).unwrap() == 10);
+            REQUIRE_FALSE(Option<int>::Some(20).unwrap() == 10);
+        }
     }
 
     TEST_CASE("check Result's methods", "[Result<T,E>]") {

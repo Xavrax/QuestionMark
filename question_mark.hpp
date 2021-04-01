@@ -1,6 +1,11 @@
 #ifndef QUESTION_MARK_HEADER
 #define QUESTION_MARK_HEADER
 
+/// Mimic panic macro as exit with error code -1
+#ifndef PANIC
+#define PANIC(ERROR) {std::cout << "Program panicked! Error: " << ERROR << std::endl; exit(1);};
+#endif
+
 #include <memory>
 
 /// Option class containing value or none
@@ -25,6 +30,37 @@ public:
     /// Checks if option contains value
     bool is_some() const {
         return _some != nullptr;
+    }
+
+    /// Checks if option contains none
+    bool is_none() const {
+        return _some == nullptr;
+    }
+
+    /// Checks if option contains given value
+    bool contains(T value) {
+        if (is_some()) {
+            return *_some == value;
+        }
+
+        return false;
+    }
+
+    /// Returns contained value and
+    T expect(const std::string& msg) {
+        if (is_none()) {
+            PANIC(msg);
+        }
+
+        return T(*_some);
+    }
+
+    T unwrap() {
+        if (is_none()) {
+            PANIC("Option::unwrap() called on a None");
+        }
+
+        return T(*_some);
     }
 
 private:
