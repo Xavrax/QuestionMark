@@ -1,5 +1,5 @@
-#ifndef QUESTIONMARK_HEADER
-#define QUESTIONMARK_HEADER
+#ifndef QUESTION_MARK_HEADER
+#define QUESTION_MARK_HEADER
 
 #include <memory>
 
@@ -89,4 +89,4 @@ private:
 
 
 
-#endif //QUESTIONMARK_HEADER
+#endif //QUESTION_MARK_HEADER
