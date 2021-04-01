@@ -8,5 +8,9 @@ namespace tests {
             REQUIRE(Result<int, int>::Ok(10).is_ok());
             REQUIRE_FALSE(Result<int, int>::Err(10).is_ok());
         }
+        SECTION("is err") {
+            REQUIRE(Result<int, int>::Err(10).is_err());
+            REQUIRE_FALSE(Result<int, int>::Ok(10).is_err());
+        }
     }
 }

@@ -21,6 +21,11 @@ public:
         return _ok != nullptr;
     }
 
+    /// Checks if result containing error
+    bool is_err() const {
+        return _err != nullptr;
+    }
+
     std::unique_ptr<T> _ok;
     std::unique_ptr<E> _err;
 private:
