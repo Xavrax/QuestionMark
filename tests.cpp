@@ -29,6 +29,37 @@ namespace tests {
             REQUIRE(Option<int>::Some(10).unwrap() == 10);
             REQUIRE_FALSE(Option<int>::Some(20).unwrap() == 10);
         }
+
+        SECTION("unwrap_or") {
+            REQUIRE(Option<int>::Some(10).unwrap_or(20) == 10);
+            REQUIRE(Option<int>::None().unwrap_or(20) == 20);
+        }
+
+        SECTION("unwrap_or_else") {
+            REQUIRE(Option<int>::Some(10).unwrap_or_else([]{return 20;}) == 10);
+            REQUIRE(Option<int>::None().unwrap_or_else([]{return 20;}) == 20);
+        }
+
+        SECTION("operator==") {
+            REQUIRE(Option<int>::Some(10) == Option<int>::Some(10));
+            REQUIRE_FALSE(Option<int>::Some(10) == Option<int>::None());
+            REQUIRE(Option<int>::None() == Option<int>::None());
+        }
+
+        SECTION("map") {
+            REQUIRE(Option<std::string>::Some(std::string("test")).map<int>([](auto s){return s.length();}) == Option<int>::Some(4));
+            REQUIRE(Option<std::string>::None().map<int>([](auto s){return s.length();}) == Option<int>::None());
+        }
+
+        SECTION("map_or") {
+            REQUIRE(Option<std::string>::Some(std::string("test")).map_or<int>(10, [](auto s){return s.length();}) == Option<int>::Some(4));
+            REQUIRE(Option<std::string>::None().map_or<int>(10, [](auto s){return s.length();}) == Option<int>::Some(10));
+        }
+
+        SECTION("map_or_else") {
+            REQUIRE(Option<std::string>::Some(std::string("test")).map_or_else<int>([]{return 10;}, [](auto s){return s.length();}) == Option<int>::Some(4));
+            REQUIRE(Option<std::string>::None().map_or_else<int>([]{return 10;}, [](auto s){return s.length();}) == Option<int>::Some(10));
+        }
     }
 
     TEST_CASE("check Result's methods", "[Result<T,E>]") {

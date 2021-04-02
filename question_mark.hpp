@@ -38,7 +38,7 @@ public:
     }
 
     /// Checks if option contains given value
-    bool contains(T value) {
+    bool contains(T value) const {
         if (is_some()) {
             return *_some == value;
         }
@@ -48,7 +48,7 @@ public:
 
     /// Returns contained value or panic with given message
     /// when value is none
-    T expect(const std::string& msg) {
+    T expect(const std::string& msg) const {
         if (is_none()) {
             PANIC(msg);
         }
@@ -57,12 +57,70 @@ public:
     }
 
     /// Returns contained value or panic when value is none
-    T unwrap() {
+    T unwrap() const {
         if (is_none()) {
             PANIC("Option::unwrap() called on a None");
         }
 
         return T(*_some);
+    }
+
+    /// Returns contained value or use given if not exists
+    T unwrap_or(T value) const {
+        if (is_none()) {
+            return value;
+        }
+
+        return T(*_some);
+    }
+
+    /// Returns contained value or calls given function and takes
+    /// him value
+    T unwrap_or_else(std::function<T(void)> fn) const {
+        if (is_none()) {
+            return fn();
+        }
+
+        return T(*_some);
+    }
+
+    /// Maps an Option<T> to Option<U> by applying a function to a contained value
+    /// or panic on no data;
+    template<typename U>
+    Option<U> map(std::function<U(T)> fn) const {
+        if (is_none()) {
+            return Option<U>::None();
+        }
+
+        return Option<U>::Some(fn(*_some));
+    }
+
+    /// Maps an Option<T> to Option<U> by applying a function to a contained value
+    /// or use given if data not exists.
+    template<typename U>
+    Option<U> map_or(U value, std::function<U(T)> fn) const {
+        if (is_none()) {
+            return Option<U>::Some(value);
+        }
+
+        return Option<U>::Some(fn(*_some));
+    }
+
+    template<typename U>
+    Option<U> map_or_else(std::function<U(void)> fn_else, std::function<U(T)> fn) const {
+        if (is_none()) {
+            return Option<U>::Some(fn_else());
+        }
+
+        return Option<U>::Some(fn(*_some));
+    }
+
+    bool operator== (const Option<T>& other) const {
+        if (is_none() || other.is_none()) {
+            return is_none() && other.is_none();
+        }
+
+        return *_some == *other._some;
     }
 
 private:
