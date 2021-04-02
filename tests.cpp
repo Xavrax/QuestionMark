@@ -60,6 +60,10 @@ namespace tests {
             REQUIRE(Option<std::string>::Some(std::string("test")).map_or_else<int>([]{return 10;}, [](auto s){return s.length();}) == Option<int>::Some(4));
             REQUIRE(Option<std::string>::None().map_or_else<int>([]{return 10;}, [](auto s){return s.length();}) == Option<int>::Some(10));
         }
+
+        SECTION("ok_or") {
+            REQUIRE(Option<int>::Some(10).ok_or(20) == Result<int, int>::Ok(10));
+        }
     }
 
     TEST_CASE("check Result's methods", "[Result<T,E>]") {
@@ -85,7 +89,16 @@ namespace tests {
             REQUIRE_FALSE(Result<int, int>::Ok(10).contains_err(10));
         }
 
+        SECTION("operator==") {
+            REQUIRE(Result<int, int>::Ok(10) == Result<int, int>::Ok(10));
+            REQUIRE(Result<int, int>::Err(10) == Result<int, int>::Err(10));
+            REQUIRE_FALSE(Result<int, int>::Ok(10) == Result<int, int>::Err(10));
+            REQUIRE_FALSE(Result<int, int>::Ok(10) == Result<int, int>::Ok(20));
+            REQUIRE_FALSE(Result<int, int>::Err(10) == Result<int, int>::Err(20));
+        }
+
         SECTION("ok") {
+            Result<int, int>::Ok(10).asd(10);
 //            REQUIRE(Result<int, int>::Ok(10).ok() == Option<int>::Some(10));
         }
     }

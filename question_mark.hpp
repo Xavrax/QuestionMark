@@ -8,6 +8,9 @@
 
 #include <memory>
 
+template <typename T, typename E>
+class Result;
+
 /// Option class containing value or none
 template <typename T>
 class Option {
@@ -106,6 +109,8 @@ public:
         return Option<U>::Some(fn(*_some));
     }
 
+    /// Maps an Option<T> to Option<U> by applying a function to a contained value
+    /// or use default function given.
     template<typename U>
     Option<U> map_or_else(std::function<U(void)> fn_else, std::function<U(T)> fn) const {
         if (is_none()) {
@@ -113,6 +118,16 @@ public:
         }
 
         return Option<U>::Some(fn(*_some));
+    }
+
+    /// Returns Result with contained value or Error with the given one
+    template<typename E>
+    Result<T, E> ok_or(E value) {
+        if (is_none()) {
+            return Result<T, E>::Err(value);
+        }
+
+        return Result<T, E>::Ok(*_some);
     }
 
     bool operator== (const Option<T>& other) const {
@@ -168,6 +183,16 @@ public:
     bool contains_err(E error) {
         if (is_err()) {
             return *_err == error;
+        }
+
+        return false;
+    }
+
+    bool operator== (const Result<T, E>& other) const {
+        if (is_ok() && other.is_ok()) {
+            return *_ok == *other._ok;
+        } else if (is_err() && is_err()) {
+            return *_err == *other._err;
         }
 
         return false;
