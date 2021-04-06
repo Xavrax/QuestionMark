@@ -130,6 +130,16 @@ public:
         return Result<T, E>::Ok(*_some);
     }
 
+    /// Returns Result with contained value or Error with the given one
+    template<typename E>
+    Result<T, E> ok_or_else(std::function<E(void)> fn) {
+        if (is_none()) {
+            return Result<T, E>::Err(fn());
+        }
+
+        return Result<T, E>::Ok(*_some);
+    }
+
     bool operator== (const Option<T>& other) const {
         if (is_none() || other.is_none()) {
             return is_none() && other.is_none();
@@ -191,7 +201,7 @@ public:
     bool operator== (const Result<T, E>& other) const {
         if (is_ok() && other.is_ok()) {
             return *_ok == *other._ok;
-        } else if (is_err() && is_err()) {
+        } else if (is_err() && other.is_err()) {
             return *_err == *other._err;
         }
 

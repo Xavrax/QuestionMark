@@ -63,6 +63,13 @@ namespace tests {
 
         SECTION("ok_or") {
             REQUIRE(Option<int>::Some(10).ok_or(20) == Result<int, int>::Ok(10));
+            REQUIRE(Option<int>::None().ok_or(20) == Result<int, int>::Err(20));
+        }
+
+        SECTION("ok_or_else") {
+            REQUIRE(Option<int>::Some(10).ok_or_else<int>([]{return 20;}) == Result<int, int>::Ok(10)); // todo: compiler cannot deduct
+            REQUIRE(Option<int>::None().ok_or_else<int>([]{return 20;}) == Result<int, int>::Err(20));  //       type of returning value
+                                                                                                        //       from lambda
         }
     }
 
@@ -98,7 +105,7 @@ namespace tests {
         }
 
         SECTION("ok") {
-            Result<int, int>::Ok(10).asd(10);
+//            Result<int, int>::Ok(10).asd(10);
 //            REQUIRE(Result<int, int>::Ok(10).ok() == Option<int>::Some(10));
         }
     }
