@@ -130,7 +130,8 @@ public:
         return Result<T, E>::Ok(*_some);
     }
 
-    /// Returns Result with contained value or Error with the given one
+    /// Returns Result with contained value or calls given function
+    /// and returns result
     template<typename E>
     Result<T, E> ok_or_else(std::function<E(void)> fn) {
         if (is_none()) {
@@ -138,6 +139,74 @@ public:
         }
 
         return Result<T, E>::Ok(*_some);
+    }
+
+    /// Returns None if the option is None, otherwise returns given value.
+    template<typename E>
+    Option<E> and_(Option<E> value) {
+        if (is_none()) {
+            return Option<E>::None();
+        }
+
+        return value;
+    }
+
+    /// Returns None if the option is None or calls given function
+    /// and returns result as Option
+    template<typename E>
+    Option<E> and_then(std::function<Option<E>(void)> fn) {
+        if (is_none()) {
+            return Option<E>::None();
+        }
+
+        return fn();
+    }
+
+    /// Returns None if the option is None or filters value with
+    /// given function - if result of predicates returns true it returns
+    /// option with data
+    Option<T> filter(std::function<bool(T)> fn) {
+        if (is_none() || !fn(*_some)) {
+            return None();
+        }
+
+        return Some(*_some);
+    }
+
+    /// Returns data if the option is not None, otherwise returns given value.
+    template<typename E>
+    Option<E> or_(Option<E> value) {
+        if (is_none()) {
+            return value;
+        }
+
+        return Some(*_some);
+    }
+
+    /// Returns value if is not None or calls given function
+    /// and returns result as Option
+    template<typename E>
+    Option<E> or_else(std::function<Option<E>(void)> fn) {
+        if (is_none()) {
+            return fn();
+        }
+
+        return Some(*_some);
+    }
+
+    /// Returns Some with data if exactly one of value or data is not None or
+    /// returns None
+    template<typename E>
+    Option<E> xor_(Option<E> value) {
+        if (is_some() && value.is_none()) {
+            return Some(*_some);
+        }
+
+        if (is_none() && value.is_some()) {
+            return value;
+        }
+
+        return None();
     }
 
     bool operator== (const Option<T>& other) const {

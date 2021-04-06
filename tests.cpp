@@ -71,6 +71,48 @@ namespace tests {
             REQUIRE(Option<int>::None().ok_or_else<int>([]{return 20;}) == Result<int, int>::Err(20));  //       type of returning value
                                                                                                         //       from lambda
         }
+
+        SECTION("and") {
+            REQUIRE(Option<int>::Some(10).and_(Option<int>::Some(20)) == Option<int>::Some(20));
+            REQUIRE(Option<int>::None().and_(Option<int>::Some(20)) == Option<int>::None());
+            REQUIRE(Option<int>::None().and_(Option<int>::None()) == Option<int>::None());
+            REQUIRE(Option<int>::Some(20).and_(Option<int>::None()) == Option<int>::None());
+        }
+
+        SECTION("and_then") {
+            REQUIRE(Option<int>::Some(10).and_then<int>([]{return Option<int>::Some(20);}) == Option<int>::Some(20)); // todo: compiler cannot deduct
+            REQUIRE(Option<int>::None().and_then<int>([]{return Option<int>::Some(20);}) == Option<int>::None());     //       type of returning value
+            REQUIRE(Option<int>::None().and_then<int>([]{return Option<int>::None();}) == Option<int>::None());       //       from lambda
+            REQUIRE(Option<int>::Some(10).and_then<int>([]{return Option<int>::None();}) == Option<int>::None());
+        }
+
+        SECTION("filter") {
+            REQUIRE(Option<int>::Some(10).filter([](auto _){return true;}) == Option<int>::Some(10));
+            REQUIRE(Option<int>::Some(10).filter([](auto _){return false;}) == Option<int>::None());
+            REQUIRE(Option<int>::None().filter([](auto _){return true;}) == Option<int>::None());
+            REQUIRE(Option<int>::None().filter([](auto _){return false;}) == Option<int>::None());
+        }
+
+        SECTION("or") {
+            REQUIRE(Option<int>::Some(10).or_(Option<int>::Some(20)) == Option<int>::Some(10));
+            REQUIRE(Option<int>::None().or_(Option<int>::Some(20)) == Option<int>::Some(20));
+            REQUIRE(Option<int>::None().or_(Option<int>::None()) == Option<int>::None());
+            REQUIRE(Option<int>::Some(10).or_(Option<int>::None()) == Option<int>::Some(10));
+        }
+
+        SECTION("or_else") {
+            REQUIRE(Option<int>::Some(10).or_else<int>([](){return Option<int>::Some(20);}) == Option<int>::Some(10)); // todo: compiler cannot deduct
+            REQUIRE(Option<int>::None().or_else<int>([](){return Option<int>::Some(20);}) == Option<int>::Some(20));   //       type of returning value
+            REQUIRE(Option<int>::None().or_else<int>([](){return Option<int>::None();}) == Option<int>::None());       //       from lambda
+            REQUIRE(Option<int>::Some(10).or_else<int>([](){return Option<int>::None();}) == Option<int>::Some(10));
+        }
+
+        SECTION("xor") {
+            REQUIRE(Option<int>::Some(10).xor_(Option<int>::Some(20)) == Option<int>::None());
+            REQUIRE(Option<int>::None().xor_(Option<int>::Some(20)) == Option<int>::Some(20));
+            REQUIRE(Option<int>::None().xor_(Option<int>::None()) == Option<int>::None());
+            REQUIRE(Option<int>::Some(10).xor_(Option<int>::None()) == Option<int>::Some(10));
+        }
     }
 
     TEST_CASE("check Result's methods", "[Result<T,E>]") {
